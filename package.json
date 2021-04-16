@@ -1,0 +1,20 @@
+{
+  "name": "neat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mfrc522-rpi": "^2.1.3",
+    "socket.io": "^4.0.1"
+  },
+  "proxy": "http://localhost:3000"
+}

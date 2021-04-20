@@ -1,6 +1,6 @@
 const express = require("express");
 const { read, write } = require("./utils.js");
-const PORT = 3020;
+const PORT = 3000;
 const HOSTNAME = "192.168.0.19";
 const app = express();
 

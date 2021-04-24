@@ -40,14 +40,12 @@ function read(data, io) {
 
     //# Get the UID of the card
     response = mfrc522.getUid();
-    console.log(response);
     if (!response.status) {
-      console.log("UID Scan Error");
+      io.sockets.emit("error", { messagee: "UID Scan Error" })
       return;
     }
     //# If we have the UID, continue
     const uid = response.data;
-    console.log(uid);
     console.log(
       "Card read UID: %s %s %s %s",
       uid[0].toString(16),
@@ -58,40 +56,33 @@ function read(data, io) {
 
     //# Select the scanned card
     const memoryCapacity = mfrc522.selectCard(uid);
-    console.log("Card Memory Capacity: " + memoryCapacity);
 
     //# This is the default key for authentication
     const key = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
 
-
-    // //# Dump Block 8
-    // for (let n = 0;n< 64;n++)
-    // {
-    //       //# Authenticate on Block 8 with key and uid
-    // if (!mfrc522.authenticate(n, key, uid)) {
-    //   console.log("Authentication Error");
-    //   return;
-    // }
-
-    //   console.log(`Block: ${n} Data: ${mfrc522.getDataForBlock(n)}`);
-    // }
-
-            //# Authenticate on Block 8 with key and uid
+    //# Authenticate on Block 8 with key and uid
     if (!mfrc522.authenticate(8, key, uid)) {
-      console.log("Authentication Error");
+      io.sockets.emit("error", { messagee: "Authentication error" })
       return;
     }
 
     let textRead = mfrc522.getDataForBlock(8);
-      console.log(`Block: 8 Data: ${hexToString(textRead)}`);
-   
+    console.log(`Block: 8 Data: ${hexToString(textRead)}`);
 
     //# Stop
     mfrc522.stopCrypto();
     clearInterval(timerId);
     clearTimeout(timeout);
 
-    io.sockets.emit("detected", {uid:[uid[0].toString(16),uid[1].toString(16),uid[2].toString(16),uid[3].toString(16)],"read data" : hexToString(textRead)});
+    io.sockets.emit("detected", {
+      uid: [
+        uid[0].toString(16),
+        uid[1].toString(16),
+        uid[2].toString(16),
+        uid[3].toString(16),
+      ],
+      "read data": hexToString(textRead),
+    });
     return true;
   }
 }
@@ -130,12 +121,10 @@ function write(data, io) {
   let response = waitUntil();
   response
     .then((response) => {
-      console.log("Card detected, CardType: " + response.bitSize);
-
       //# Get the UID of the card
       response = mfrc522.getUid();
       if (!response.status) {
-        console.log("UID Scan Error");
+        io.sockets.emit("error", { messagee:  "UID Scan Error"})
         return;
       }
       //# If we have the UID, continue
@@ -150,45 +139,32 @@ function write(data, io) {
 
       //# Select the scanned card
       const memoryCapacity = mfrc522.selectCard(uid);
-      console.log("Card Memory Capacity: " + memoryCapacity);
 
       //# This is the default key for authentication
       const key = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
 
       //# Authenticate on Block 8 with key and uid
       if (!mfrc522.authenticate(8, key, uid)) {
-        console.log("Authentication Error");
+        io.sockets.emit("error", { messagee: "Authentication error" })
         return;
       }
-
-      console.log("Block 8 looked like this:");
-      console.log(mfrc522.getDataForBlock(8));
-      console.log("THiS IS DATA;" + data.text);
-      console.log("Block 8 will be filled with 0xFF:");
-      const data1 = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff,0xff, 0xff, 0xff, 0xff, 0xff, 0x00,0xff, 0xff, 0xff, 0xff];
-
-      let datatoWrite = new Int16Array((data.text).split('').map(x=>x.charCodeAt(0)))
+ 
+      let datatoWrite = new Int16Array(
+        data.text.split("").map((x) => x.charCodeAt(0))
+      );
       mfrc522.writeDataToBlock(8, datatoWrite);
-      console.log(datatoWrite);
-
-      console.log("Now Block 8 looks like this:");
-      console.log(hexToString(mfrc522.getDataForBlock(8)));
-
       mfrc522.stopCrypto();
       io.sockets.emit("success", { message: "written" });
-
-      console.log("finished successfully!");
     })
     .catch((err) =>
       io.sockets.emit("error", { messagee: "timeout,no card read" })
     );
 }
 
-function hexToString(arr)
-{
-  let res = '';
-  for (let i = 0;i< arr.length;i++){
-    res += String.fromCharCode(parseInt(arr[i]))
+function hexToString(arr) {
+  let res = "";
+  for (let i = 0; i < arr.length; i++) {
+    res += String.fromCharCode(parseInt(arr[i]));
   }
   return res;
 }

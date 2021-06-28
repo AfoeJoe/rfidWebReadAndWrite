@@ -33,9 +33,9 @@ function read(data, io) {
     //# Scan for cards
     let response = mfrc522.findCard();
     if (!response.status) {
-      console.log(response.status);
+      console.log(response);
       console.log('No Card');
-      //return;
+      return;
     }
     console.log('Card detected, CardType: ' + response);
 

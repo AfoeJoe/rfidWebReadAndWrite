@@ -1,7 +1,7 @@
 const express = require('express');
 const { read, write } = require('./utils.js');
 const PORT = process.env.PORT || 3000;
-const HOSTNAME = '192.168.0.20';
+const HOSTNAME = 'https://secure-springs-93980.herokuapp.com';
 const app = express();
 
 const server = require('http').createServer(app);
@@ -27,7 +27,8 @@ server.listen(PORT, () => {
 io.on('connection', (socket) => {
   socket.emit('connection', 'reads');
   socket.on('read', (data) => {
-    console.log("i am here");
-    read(data, io)});
+    console.log('i am here');
+    read(data, io);
+  });
   socket.on('write', (data) => write(data, io));
 });

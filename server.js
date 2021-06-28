@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, HOSTNAME, () => {
   console.log(`Server running on ${PORT}`);
 });
 io.on('connection', (socket) => {

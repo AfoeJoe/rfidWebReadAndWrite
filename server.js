@@ -26,6 +26,8 @@ server.listen(PORT, () => {
 });
 io.on('connection', (socket) => {
   socket.emit('connection', 'reads');
-  socket.on('read', (data) => read(data, io));
+  socket.on('read', (data) => {
+    console.log("i am here");
+    read(data, io)});
   socket.on('write', (data) => write(data, io));
 });

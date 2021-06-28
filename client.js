@@ -11,7 +11,6 @@ socket.on("detected", (data) => updateDom(data,id++));
 socket.on("success", (data) => updateDom(data,id++));
 socket.on("error", (data) => updateDom(data,id++));
 
-// console.log("HE")
 const text = document.getElementById("text");
 const body = document.getElementById("body");
 const info = document.getElementById("info");

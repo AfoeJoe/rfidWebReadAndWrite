@@ -35,7 +35,7 @@ function read(data, io) {
     if (!response.status) {
       console.log(response.status);
       console.log('No Card');
-      return;
+      //return;
     }
     console.log('Card detected, CardType: ' + response);
 
